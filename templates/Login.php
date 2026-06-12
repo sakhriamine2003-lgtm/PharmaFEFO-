@@ -1,58 +1,122 @@
+<?php
+session_start();
+require_once __DIR__ . '/../../config/database.php';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    $stmt = $pdo->prepare("
+        SELECT id, nom, email, password, role, actif
+        FROM UTILISATEUR
+        WHERE email = ?
+        LIMIT 1
+    ");
+
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && $user['actif'] == 1 && password_verify($password, $user['password'])) {
+
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['nom'] = $user['nom'];
+        $_SESSION['role'] = $user['role'];
+
+        switch ($user['role']) {
+
+            case 'ADMIN':
+                header('Location: /farmafefo/templates/admin/dashboard.php');
+                exit;
+
+            case 'PHARMACIEN':
+                header('Location: /farmafefo/templates/pharmacien/dashboard.php');
+                exit;
+
+            case 'PREPARATEUR':
+                header('Location: /farmafefo/templates/preparateur/dashboard.php');
+                exit;
+
+            default:
+                $error = 'Rôle utilisateur non reconnu.';
+        }
+
+    } else {
+        $error = 'Email ou mot de passe incorrect ou compte inactif.';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>FarmaFefo – Connexion</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900">
+<body class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
 
-    <div class="w-full max-w-md p-8 rounded-3xl backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl">
+<div class="w-full max-w-md">
 
-        <div class="text-center mb-8">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-white/20 flex items-center justify-center text-3xl">
-                💊
+    <!-- Logo -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl text-white mb-1">FarmaFefo</h1>
+        <p class="text-slate-400 text-sm">
+            Gestion de stock pharmaceutique (FEFO)
+        </p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+
+        <h2 class="text-2xl text-slate-800 mb-6">
+            Connexion
+        </h2>
+
+        <?php if (!empty($error)): ?>
+            <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 mb-5 text-sm">
+                <?= htmlspecialchars($error) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" class="space-y-5">
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase">
+                    Email
+                </label>
+
+                <input type="email" name="email" required
+                    class="w-full border rounded-xl px-4 py-3 text-sm"
+                    placeholder="admin@pharma.com">
             </div>
 
-            <h2 class="text-3xl font-bold text-white">
-                Pharma FEFO
-            </h2>
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase">
+                    Mot de passe
+                </label>
 
-            <p class="text-slate-300 mt-2">
-                Connectez-vous à votre compte
-            </p>
-        </div>
+                <input type="password" name="password" required
+                    class="w-full border rounded-xl px-4 py-3 text-sm"
+                    placeholder="••••••••">
+            </div>
 
-        <form class="space-y-4">
-
-            <input
-                type="email"
-                placeholder="Adresse email"
-                class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            >
-
-            <input
-                type="password"
-                placeholder="Mot de passe"
-                class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            >
-
-            <button
-                type="submit"
-                class="w-full py-3 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition duration-300"
-            >
+            <button type="submit"
+                class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl">
                 Se connecter
             </button>
 
         </form>
 
-        <p class="text-center text-slate-400 text-sm mt-6">
-            Pharma FEFO Management System
-        </p>
+        <div class="mt-6 pt-5 border-t text-xs text-slate-500">
+            <p class="font-semibold mb-2">Rôles système :</p>
+            <p>ADMIN • PHARMACIEN • PREPARATEUR</p>
+        </div>
 
     </div>
+
+</div>
 
 </body>
 </html>
