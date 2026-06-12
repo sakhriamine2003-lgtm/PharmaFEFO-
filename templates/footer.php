@@ -1,6 +1,8 @@
 </main>
-<footer style="text-align:center;padding:1rem;font-size:.8rem;color:#888;margin-top:2rem">
-  PharmaFEFO &copy; <?= date('Y') ?> — Gestion FEFO conforme BPP
+
+<footer class="text-center text-xs text-slate-400 py-6 mt-8">
+    FarmaFefo &copy; <?= date('Y') ?> — Gestion de stock FEFO conforme BPP
 </footer>
+
 </body>
 </html>
