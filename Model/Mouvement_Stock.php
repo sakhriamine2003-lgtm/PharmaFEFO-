@@ -90,4 +90,5 @@ class MouvementStock
     {
         $this->effectueLe = $effectueLe;
     }
+    
 }
