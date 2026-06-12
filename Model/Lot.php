@@ -1,0 +1,1 @@
+attributs + constructor + getters setters
