@@ -22,7 +22,10 @@
     <div class="bg-white rounded-2xl shadow p-6">
         <h2 class="text-lg font-medium text-slate-700 mb-1">🔔 Alertes péremption</h2>
         <p class="text-sm text-slate-400 mb-4">
-            
+            <?php
+                 $rouge = $rouge ?? [];
+                 $orange = $orange ?? [];
+            ?>
             <span class="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full mr-1">
                 <?= count($rouge) ?> rouge
             </span>
