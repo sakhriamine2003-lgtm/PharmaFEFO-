@@ -1,41 +1,56 @@
-<?php
-$pageTitle = 'Tableau de bord';
-require 'templates/header.php';
+<?php $pageTitle = 'Tableau de bord'; require __DIR__ . '/header.php'; ?>
 
-$rouge  = ((['criticite'] === 'rouge'));
-$orange = ((['criticite'] === 'orange'));
-?>
+<h1 class="text-2xl font-semibold text-slate-700 mb-6">Tableau de bord</h1>
 
+<?php if (!empty($rouge)): ?>
+    <div class="bg-red-50 border border-red-300 text-red-800 rounded-xl px-5 py-3 mb-6 flex items-center justify-between">
+        <span>⚠️ <strong><?= count($rouge) ?> lot(s)</strong> expirent dans moins de 30 jours</span>
+        <a href="/alertes?filtre=rouge" class="text-sm underline">Voir →</a>
+    </div>
+<?php endif; ?>
 
-<div class="alert-err">
-    <a href="?page=alertes&filtre=rouge">Voir →</a>
-</div>
-<div class="grid-2">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-    <div class="card">
-        <h2>📦 Réception d'un nouveau lot</h2>
-        <a href="?page=reception" class="btn btn-primary">Enregistrer un lot</a>
+    <div class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-lg font-medium text-slate-700 mb-1">📦 Réception de lot</h2>
+        <p class="text-sm text-slate-400 mb-4">Enregistrer un nouveau lot fournisseur</p>
+        <a href="/stock/reception" class="inline-block bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            Enregistrer un lot
+        </a>
     </div>
 
-    <div class="card">
-        <h2>🔔 Alertes péremption</h2>
-        <p>
-            <span class="badge badge-rouge"><?= $rouge ?> Rouge</span>
-            <span class="badge badge-orange"><?= $orange ?> Orange</span>
+    <div class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-lg font-medium text-slate-700 mb-1">🔔 Alertes péremption</h2>
+        <p class="text-sm text-slate-400 mb-4">
+            
+            <span class="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full mr-1">
+                <?= count($rouge) ?> rouge
+            </span>
+            <span class="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full">
+                <?= count($orange) ?> orange
+            </span>
         </p>
-        <a href="?page=alertes" class="btn btn-primary">Voir les alertes</a>
+        <a href="/alertes" class="inline-block bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            Voir les alertes
+        </a>
     </div>
 
-    <div class="card">
-        <h2>💊 Dispensation FEFO</h2>
-        <a href="?page=dispense" class="btn btn-primary">Dispenser</a>
+    <div class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-lg font-medium text-slate-700 mb-1">💊 Dispensation FEFO</h2>
+        <p class="text-sm text-slate-400 mb-4">Sortie automatique du lot le plus proche d'expiration</p>
+        <a href="/dispense" class="inline-block bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            Dispenser
+        </a>
     </div>
 
-    <div class="card">
-        <h2>📊 Rapport mensuel</h2>
-        <a href="?page=report" class="btn btn-primary">Générer</a>
+    <div class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-lg font-medium text-slate-700 mb-1">📊 Rapport mensuel</h2>
+        <p class="text-sm text-slate-400 mb-4">Générer le rapport des mouvements du mois</p>
+        <a href="/rapport" class="inline-block bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            Générer
+        </a>
     </div>
 
 </div>
 
-<?php require 'templates/header.php'; ?>
+<?php require __DIR__ . '/footer.php'; ?>
