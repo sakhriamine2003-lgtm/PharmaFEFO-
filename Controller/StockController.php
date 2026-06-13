@@ -35,4 +35,46 @@ class StockController
         $this->mouvement($lotId, $userId, TypeMouvement::ENTREE, $qte);
 
         return ['success' => true];
-    }}
+    }
+
+    
+
+    
+    public function sortieFEFO(
+        int $medicamentId,
+        int $qteDemandee,
+        int $userId
+    ): array {
+
+        $reste = $qteDemandee;
+
+        foreach ($this->repo->findByMedicamentFEFO($medicamentId) as $lot) {
+
+            if ($reste <= 0) break;
+
+            $qte = min($reste, $lot->getQuantite());
+
+            $lot->decremente($qte);
+            $this->repo->update($lot);
+
+            $this->mouvement(
+                $lot->getId(),
+                $userId,
+                TypeMouvement::SORTIE,
+                $qte
+            );
+
+            $reste -= $qte;
+        }
+
+        return $reste > 0
+            ? ['success' => false, 'message' => 'Stock insuffisant']
+            : ['success' => true];
+    }
+
+
+
+
+
+
+}
