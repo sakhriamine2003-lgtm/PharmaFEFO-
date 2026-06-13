@@ -39,7 +39,7 @@ class StockController
 
     
 
-    
+
     public function sortieFEFO(
         int $medicamentId,
         int $qteDemandee,
@@ -76,5 +76,26 @@ class StockController
 
 
 
+    
+    private function mouvement(
+        int $lotId,
+        int $userId,
+        TypeMouvement $type,
+        int $qte
+    ): void {
 
+        $this->pdo->prepare("
+            INSERT INTO mouvements_stock
+            (lot_id, utilisateur_id, type, quantite, date)
+            VALUES (?, ?, ?, ?, NOW())
+        ")->execute([
+            $lotId,
+            $userId,
+            $type->value,
+            $qte
+        ]);
+    }
 }
+
+
+
