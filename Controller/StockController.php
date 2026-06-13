@@ -1,42 +1,38 @@
 <?php
 
+require_once '../repository/LotRepository.php';
+require_once '../config/database.php';
+
 class StockController
 {
-    private  $repo;
+    private LotRepository $repo;
+    private PDO $pdo;
 
-    public function __construct($repo)
+    public function __construct()
     {
-        $this->repo = $repo;
+        $this->repo = new LotRepository();
+        $this->pdo = Database::getInstance();
     }
 
-   
-    public function index()
-    {
-       
-        $stock = $this->repo->getStock();
+    public function receptionnerLot(
+        int $medicamentId,
+        string $numLot,
+        string $date,
+        int $qte,
+        float $prix,
+        int $userId
+    ): array {
 
-exit;
-        include __DIR__ . "/../templates/prepa/dashboard.php";
-    }
+        $d = DateTime::createFromFormat('Y-m-d', $date);
 
-    // ➕ Add product batch
-   public function store()
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!$d || $d <= new DateTime())
+            return ['success' => false, 'message' => 'Date invalide'];
 
-        $this->repo->addStock(
-            $_POST['product_id'],
-            $_POST['lot_number'],
-            $_POST['quantity'],
-            $_POST['expiry_date'],
-            $_POST['status'],
+        $lotId = $this->repo->save(
+            new Lot(null, $medicamentId, $numLot, $d, $qte, $prix)
         );
 
-        header("Location: index.php?action=preparateur_dashboard");
-exit;
-        
-require_once '../src/Repository/StockBatchRepository.php';
-    }
-}
+        $this->mouvement($lotId, $userId, TypeMouvement::ENTREE, $qte);
 
-}
+        return ['success' => true];
+    }}
