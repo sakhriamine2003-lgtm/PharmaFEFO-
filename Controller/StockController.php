@@ -37,8 +37,6 @@ class StockController
         return ['success' => true];
     }
 
-    
-
 
     public function sortieFEFO(
         int $medicamentId,
@@ -71,8 +69,6 @@ class StockController
             ? ['success' => false, 'message' => 'Stock insuffisant']
             : ['success' => true];
     }
-
-
 
 
 
